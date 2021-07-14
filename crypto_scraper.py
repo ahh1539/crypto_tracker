@@ -12,11 +12,13 @@ gc = gspread.service_account(filename='credentials.json')
 sh = gc.open_by_key(document_id)
 worksheet = sh.sheet1
 res = worksheet.get_all_records()
+# fake browser otherwise get 403
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
 
 # beefy_vault = requests.get('https://api.apeboard.finance/beefyMatic/{}'.format(wallet_address)).json()
-dfyn_vault = requests.get('https://api.apeboard.finance/dfynMatic/{}'.format(wallet_address)).json()
-matic_wallet = requests.get('https://api.apeboard.finance/wallet/matic/{}'.format(wallet_address)).json()
-eth_wallet = requests.get('https://api.apeboard.finance/wallet/eth/{}'.format(wallet_address)).json()
+dfyn_vault = requests.get('https://api.apeboard.finance/dfynMatic/{}'.format(wallet_address), headers=headers).json()
+matic_wallet = requests.get('https://api.apeboard.finance/wallet/matic/{}'.format(wallet_address), headers=headers).json()
+eth_wallet = requests.get('https://api.apeboard.finance/wallet/eth/{}'.format(wallet_address), headers=headers).json()
 
 def calculate_vaults(all_vaults):
     all_vaults_total = 0
@@ -38,7 +40,8 @@ def calculate_wallets(all_wallets):
     all_wallets_total = 0
     for wallet in all_wallets:
         for token in wallet:
-            all_wallets_total += (float(token.get('balance')) * float(token.get('price')))
+            if token.get('name') != 'ProChain':
+                all_wallets_total += (float(token.get('balance')) * float(token.get('price')))
     return all_wallets_total
 
 def main():
