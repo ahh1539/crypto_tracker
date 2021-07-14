@@ -31,9 +31,9 @@ def calculate_vaults(all_vaults):
             for position in vault.get('farms'):
                 for token in position.get('tokens'):
                     all_vaults_total += (float(token.get('balance')) * float(token.get('price')))
-            if position.get('rewards'):
-                for token in position.get('rewards'):
-                    all_vaults_total += (float(token.get('balance')) * float(token.get('price')))
+                if position.get('rewards'):
+                    for token in position.get('rewards'):
+                        all_vaults_total += (float(token.get('balance')) * float(token.get('price')))
     return all_vaults_total
 
 def calculate_wallets(all_wallets):
